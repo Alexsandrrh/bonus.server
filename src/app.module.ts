@@ -6,6 +6,7 @@ import { TypegooseModule } from 'nestjs-typegoose';
 import { AppService } from './app.service';
 import { AppController } from './app.controller';
 import { ConfigServiceInterface } from './types';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { ConfigServiceInterface } from './types';
         DATABASE_URI: Joi.string().default(
           'mongodb://localhost:27017/bonus-db',
         ),
+        ACCESS_TOKEN_SECRET: Joi.string().default('secret_key'),
       }),
     }),
     TypegooseModule.forRootAsync({
@@ -24,6 +26,7 @@ import { ConfigServiceInterface } from './types';
         uri: configService.get<string>('DATABASE_URI'),
       }),
     }),
+    AuthModule,
   ],
   providers: [AppService],
   controllers: [AppController],
