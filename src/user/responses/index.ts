@@ -1,0 +1,1 @@
+export * from './userOk.response';

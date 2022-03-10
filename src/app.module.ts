@@ -1,12 +1,12 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as Joi from 'joi';
 import { TypegooseModule } from 'nestjs-typegoose';
 
-import { AppService } from './app.service';
-import { AppController } from './app.controller';
 import { ConfigServiceInterface } from './types';
 import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
+import { AuthMiddleware } from './auth/auth.middleware';
 
 @Module({
   imports: [
@@ -27,8 +27,14 @@ import { AuthModule } from './auth/auth.module';
       }),
     }),
     AuthModule,
+    UserModule,
   ],
-  providers: [AppService],
-  controllers: [AppController],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(AuthMiddleware).forRoutes({
+      path: '*',
+      method: RequestMethod.ALL,
+    });
+  }
+}

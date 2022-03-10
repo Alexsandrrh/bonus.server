@@ -9,7 +9,7 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { AuthService } from './auth.service';
 import { AuthLoginDto, AuthRegisterDto } from './dto';
-import { AuthOkResponse } from './response';
+import { AuthOkResponse } from './responses';
 
 @ApiTags('Авторизация пользователя')
 @Controller('auth')
