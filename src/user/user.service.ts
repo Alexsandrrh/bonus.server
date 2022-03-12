@@ -4,6 +4,7 @@ import { InjectModel } from 'nestjs-typegoose';
 
 import { User } from './models';
 import { UserOkResponse } from './responses';
+import { UsersOkResponse } from './responses/usersOk.response';
 
 @Injectable()
 export class UserService {
@@ -18,7 +19,20 @@ export class UserService {
       .orFail(new NotFoundException('Пользователь не найден!'));
 
   /**
+   * Получить всех пользователей без авторизированного пользователя
+   * */
+  getUsersWithoutAuthUser = (userId: string) =>
+    this.userModel.find({ _id: { $ne: userId } });
+
+  /**
    * Создать ответ пользователя
    * */
   buildUserResponse = (user: User): UserOkResponse => ({ response: user });
+
+  /**
+   * Создать ответ пользователей
+   * */
+  buildUsersResponse = (users: User[]): UsersOkResponse => ({
+    response: users,
+  });
 }

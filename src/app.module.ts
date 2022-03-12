@@ -7,6 +7,8 @@ import { ConfigServiceInterface } from './types';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { AuthMiddleware } from './auth/auth.middleware';
+import { OperationModule } from './operation/operation.module';
+import { ProductModule } from './product/product.module';
 
 @Module({
   imports: [
@@ -28,6 +30,8 @@ import { AuthMiddleware } from './auth/auth.middleware';
     }),
     AuthModule,
     UserModule,
+    OperationModule,
+    ProductModule,
   ],
 })
 export class AppModule {

@@ -10,6 +10,7 @@ export const UserCollection = 'users';
 export interface User extends Base {}
 
 @ModelOptions({
+  options: { customName: 'User' },
   schemaOptions: {
     collection: UserCollection,
     toJSON,

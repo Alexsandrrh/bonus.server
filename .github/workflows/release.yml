@@ -1,0 +1,53 @@
+name: Release Bonus Server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Проверка ветки main
+        uses: actions/checkout@v2
+        with:
+          ref: main
+
+      - name: Устанавливаем Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16.13.2'
+
+      - name: Устанавливаем зависимости проекта
+        run: yarn
+
+      - name: Собираем проект
+        run: yarn build
+
+      - name: Подготавливаем проект к транспортировки
+        run: rm -rf node_modules
+
+      - name: Перемещаем собранный проект на стенд
+        uses: appleboy/scp-action@master
+        env:
+          HOST: ${{ secrets.HOST }}
+          USERNAME: ${{ secrets.USERNAME }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+        with:
+          source: '.'
+          target: '/var/app'
+
+      - name: Устанавливаем зависимости на стенде
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          script: |
+            pm2 stop server
+            pm2 delete server
+            cd /var/app
+            yarn
+            pm2 start ./dist/main.js --name server
