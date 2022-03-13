@@ -27,12 +27,12 @@ export class UserService {
   /**
    * Создать ответ пользователя
    * */
-  buildUserResponse = (user: User): UserOkResponse => ({ response: user });
+  buildUserOkResponse = (user: User): UserOkResponse => ({ response: user });
 
   /**
    * Создать ответ пользователей
    * */
-  buildUsersResponse = (users: User[]): UsersOkResponse => ({
+  buildUsersOkResponse = (users: User[]): UsersOkResponse => ({
     response: users,
   });
 }

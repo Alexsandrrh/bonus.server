@@ -8,7 +8,7 @@ import {
 
 import { UserOkResponse } from './responses';
 import { AuthGuard } from '../auth/auth.guard';
-import { AuthUser } from '../auth/decorators/authUser.decorator';
+import { AuthUser } from '../auth/decorators';
 import { UserService } from './user.service';
 import { UsersOkResponse } from './responses/usersOk.response';
 
@@ -24,15 +24,15 @@ export class UserController {
     summary: 'Получение пользователя',
   })
   @ApiBearerAuth()
+  @Get('user/me')
+  @UseGuards(AuthGuard)
   @ApiOkResponse({
     type: UserOkResponse,
     description: 'Ответ при успешном получении пользователя',
   })
-  @Get('user/me')
-  @UseGuards(AuthGuard)
   async getUser(@AuthUser('id') userId: string): Promise<UserOkResponse> {
     const user = await this.userService.getUser(userId);
-    return this.userService.buildUserResponse(user);
+    return this.userService.buildUserOkResponse(user);
   }
 
   /**
@@ -51,6 +51,6 @@ export class UserController {
   })
   async getUsers(@AuthUser('id') userId: string): Promise<UsersOkResponse> {
     const users = await this.userService.getUsersWithoutAuthUser(userId);
-    return this.userService.buildUsersResponse(users);
+    return this.userService.buildUsersOkResponse(users);
   }
 }

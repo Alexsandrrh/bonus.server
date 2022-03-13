@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-import { User } from '../models';
+import { UserSchema, UserSchemaType } from '../schemes';
 
 export class UserOkResponse {
-  @ApiProperty()
-  response: User;
+  @ApiProperty({ type: UserSchema })
+  response: UserSchemaType;
 }
