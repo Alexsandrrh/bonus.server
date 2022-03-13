@@ -39,7 +39,7 @@ jobs:
           source: '.'
           target: '/var/app'
 
-      - name: Устанавливаем зависимости на стенде
+      - name: Устанавливаем зависимости на стенде и перезапускаем сервер
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
