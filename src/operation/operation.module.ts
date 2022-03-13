@@ -9,5 +9,6 @@ import { Operation } from './models';
   imports: [TypegooseModule.forFeature([Operation])],
   controllers: [OperationController],
   providers: [OperationService],
+  exports: [OperationService],
 })
 export class OperationModule {}

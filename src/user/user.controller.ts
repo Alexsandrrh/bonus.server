@@ -6,7 +6,7 @@ import {
   ApiOkResponse,
 } from '@nestjs/swagger';
 
-import { UserOkResponse } from './responses';
+import { UserWithAmountOkResponse } from './responses';
 import { AuthGuard } from '../auth/auth.guard';
 import { AuthUser } from '../auth/decorators';
 import { UserService } from './user.service';
@@ -27,11 +27,13 @@ export class UserController {
   @Get('user/me')
   @UseGuards(AuthGuard)
   @ApiOkResponse({
-    type: UserOkResponse,
+    type: UserWithAmountOkResponse,
     description: 'Ответ при успешном получении пользователя',
   })
-  async getUser(@AuthUser('id') userId: string): Promise<UserOkResponse> {
-    const user = await this.userService.getUser(userId);
+  async getUser(
+    @AuthUser('id') userId: string,
+  ): Promise<UserWithAmountOkResponse> {
+    const user = await this.userService.getAggregatedUser(userId);
     return this.userService.buildUserOkResponse(user);
   }
 

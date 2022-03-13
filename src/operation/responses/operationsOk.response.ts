@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Operation } from '../models';
+
+import { OperationSchema, OperationSchemaType } from '../schemes';
 
 export class OperationsOkResponse {
-  @ApiProperty({ type: [Operation] })
-  response: Operation[];
+  @ApiProperty({ type: [OperationSchema] })
+  response: OperationSchemaType[];
 }

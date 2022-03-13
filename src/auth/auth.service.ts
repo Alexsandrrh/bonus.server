@@ -5,7 +5,7 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { hash, genSalt, compare } from 'bcrypt';
+import { compare, genSalt, hash } from 'bcrypt';
 import { sign } from 'jsonwebtoken';
 import { InjectModel } from 'nestjs-typegoose';
 import { ModelType } from '@typegoose/typegoose/lib/types';
@@ -13,11 +13,15 @@ import { ModelType } from '@typegoose/typegoose/lib/types';
 import { User } from '../user/models';
 import { ConfigServiceInterface } from '../types';
 import { AuthRegisterDto } from './dto';
+import { OperationService } from '../operation/operation.service';
+import { PAYMENT_TYPE } from '../operation/consts';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectModel(User) private readonly userModel: ModelType<User>,
+    @Inject(OperationService)
+    private readonly operationService: OperationService,
     @Inject(ConfigService)
     private readonly configService: ConfigServiceInterface,
   ) {}
@@ -35,8 +39,21 @@ export class AuthService {
    * */
   createUser = async ({ password, ...authRegisterDto }: AuthRegisterDto) => {
     const hashedPassword = await this.hashPassword(password);
-    const user = new this.userModel({ ...authRegisterDto, hashedPassword });
-    return await user.save();
+    const user = await this.userModel.create({
+      ...authRegisterDto,
+      hashedPassword,
+    });
+
+    await this.operationService.createOperation({
+      incomingAccount: user.id,
+      incomingAccountType: 'UserModel',
+      outgoingAccount: null,
+      outgoingAccountType: null,
+      paymentAmount: 500,
+      paymentType: PAYMENT_TYPE.present,
+    });
+
+    return user;
   };
 
   /**

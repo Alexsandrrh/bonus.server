@@ -5,12 +5,13 @@ import { IsEmail, IsUrl } from 'class-validator';
 import { toJSON } from '../../utils';
 import { ApiProperty } from '@nestjs/swagger';
 
+export const UserModelName = 'User';
 export const UserCollection = 'users';
 
 export interface User extends Base {}
 
 @ModelOptions({
-  options: { customName: 'User' },
+  options: { customName: UserModelName },
   schemaOptions: {
     collection: UserCollection,
     toJSON,

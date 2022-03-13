@@ -1,39 +1,30 @@
 import { TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
-import { Prop, Ref } from '@typegoose/typegoose';
+import { ModelOptions, Prop, Ref } from '@typegoose/typegoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { Types } from 'mongoose';
 
-import { User } from '../../user/models';
-import { Product } from '../../product/models';
+import { User, UserModelName } from '../../user/models';
+import { PAYMENT_TYPE } from '../consts';
+import { UserSchema } from '../../user/schemes';
+import { Product, ProductModelName } from '../../product/models';
+import { ProductSchema } from '../../product/schemes';
 
-/** Типы операций */
-enum PAYMENT_TYPE {
-  /** Перевод */
-  transfer,
-  /** Покупка */
-  purchase,
-}
+export const OperationModelName = 'Operation';
+export const OperationCollection = 'operations';
 
-type RefTypes = Ref<User | Product>;
-const TypesOneOf = [
-  {
-    $ref: '#/components/schemas/User',
+const AccountTypeEnum = [UserModelName, ProductModelName];
+const AccountTypeOneOf = [UserSchema.name, ProductSchema.name].map((name) => ({
+  $ref: `#/components/schemas/${name}`,
+}));
+type AccountTypeRef = Ref<User | Product>;
+
+@ModelOptions({
+  options: { customName: OperationModelName },
+  schemaOptions: {
+    collection: OperationCollection,
   },
-  {
-    $ref: '#/components/schemas/Product',
-  },
-];
-
-const enumTypes = [User.name, Product.name];
-
+})
 export class Operation extends TimeStamps {
-  /** Идентификатор операции */
-  @ApiProperty({
-    format: 'uuid',
-    description: 'Идентификатор операции',
-  })
-  id: string;
-
   /** Тип операции */
   @ApiProperty({
     description: 'Тип операции',
@@ -45,19 +36,20 @@ export class Operation extends TimeStamps {
   /** Счет которому приходит сумма */
   @ApiProperty({
     description: 'Счет которому приходит сумма',
-    oneOf: TypesOneOf,
+    nullable: true,
+    oneOf: AccountTypeOneOf,
   })
   @Prop({
     type: Types.ObjectId,
     refPath: 'incomingAccountType',
   })
-  incomingAccount: RefTypes;
+  incomingAccount: AccountTypeRef;
 
   /** Тип счета (Счет или товар), которому поступает сумма */
   @ApiProperty({
     type: String,
     description: 'Тип счета (Счет или товар)',
-    enum: enumTypes,
+    enum: AccountTypeEnum,
   })
   @Prop()
   incomingAccountType: string;
@@ -65,18 +57,19 @@ export class Operation extends TimeStamps {
   /** Счет от которого взымается сумма */
   @ApiProperty({
     description: 'Счет от которого взымается сумма',
-    oneOf: TypesOneOf,
+    nullable: true,
+    oneOf: AccountTypeOneOf,
   })
-  @Prop({ type: Types.ObjectId, refPath: 'outcomingAccountType' })
-  outcomingAccount: RefTypes;
+  @Prop({ type: Types.ObjectId, refPath: 'outgoingAccountType' })
+  outgoingAccount: AccountTypeRef;
 
   /** Тип счета (Счет или товар), от которого поступает сумма */
   @ApiProperty({
     description: 'Тип счета (Счет или товар), от которого поступает сумма',
-    enum: enumTypes,
+    enum: AccountTypeEnum,
   })
   @Prop()
-  outcomingAccountType: string;
+  outgoingAccountType: string;
 
   /** Сумма */
   @ApiProperty({
@@ -84,15 +77,4 @@ export class Operation extends TimeStamps {
   })
   @Prop({ type: Number, default: 0 })
   paymentAmount: number;
-
-  /** Дата создания операции */
-  @ApiProperty({
-    type: Date,
-    description: 'Дата создания операции',
-  })
-  createdAt: Date;
-
-  /** Дата изменения операции */
-  @ApiProperty({ type: Date, description: 'Дата изменения операции' })
-  updatedAt: Date;
 }

@@ -19,6 +19,13 @@ export class OperationService {
     this.operationModel.find({ $or: [{ to: userId }, { from: userId }] });
 
   /**
+   * Создать операцию
+   * */
+  createOperation = async (
+    params: Omit<Operation, 'id' | 'createdAt' | 'updatedAt'>,
+  ) => this.operationModel.create(params);
+
+  /**
    * Создать ответ по операциям
    * */
   buildOperationsResponse = (

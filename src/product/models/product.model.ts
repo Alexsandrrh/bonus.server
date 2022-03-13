@@ -1,7 +1,20 @@
-import { TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
+import { Base, TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
 import { ApiProperty } from '@nestjs/swagger';
-import { Prop } from '@typegoose/typegoose';
+import { ModelOptions, Prop } from '@typegoose/typegoose';
+import { toJSON } from '../../utils';
 
+export const ProductModelName = 'Product';
+export const ProductCollection = 'products';
+
+export interface Product extends Base {}
+
+@ModelOptions({
+  options: { customName: ProductModelName },
+  schemaOptions: {
+    collection: ProductCollection,
+    toJSON,
+  },
+})
 export class Product extends TimeStamps {
   /** Название товара */
   @ApiProperty({
