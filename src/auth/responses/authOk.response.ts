@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-import { Auth } from '../auth.model';
+import { AuthSchema } from '../schemes';
 
 export class AuthOkResponse {
   @ApiProperty()
-  response: Auth;
+  response: AuthSchema;
 }

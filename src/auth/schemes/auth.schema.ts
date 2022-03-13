@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class Auth {
+export class AuthSchema {
   /** Access токен */
   @ApiProperty({
     description: 'Access токен',
