@@ -1,11 +1,32 @@
 import { TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
 import { ApiProperty } from '@nestjs/swagger';
+import { Prop } from '@typegoose/typegoose';
 
 export class Product extends TimeStamps {
-  /** Идентификатор продукта */
+  /** Название товара */
   @ApiProperty({
-    format: 'uuid',
-    description: 'Идентификатор продукта',
+    description: 'Название товара',
   })
-  id: string;
+  @Prop({
+    type: String,
+    required: true,
+  })
+  title: string;
+
+  /** Описание товара */
+  @ApiProperty({
+    description: 'Описание товара',
+  })
+  @Prop({
+    type: String,
+    required: true,
+  })
+  description: string;
+
+  /** Цена товара */
+  @ApiProperty({
+    description: 'Цена товара',
+  })
+  @Prop({ type: Number, required: true })
+  price: number;
 }
