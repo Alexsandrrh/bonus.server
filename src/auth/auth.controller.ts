@@ -1,10 +1,4 @@
-import {
-  Controller,
-  Post,
-  Body,
-  UsePipes,
-  ValidationPipe,
-} from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { AuthService } from './auth.service';
@@ -22,12 +16,11 @@ export class AuthController {
   @ApiOperation({
     summary: 'Регистрация пользователя',
   })
+  @Post('register')
   @ApiOkResponse({
     description: 'Ответ по успешной авторизации',
     type: AuthOkResponse,
   })
-  @Post('register')
-  @UsePipes(new ValidationPipe())
   async registerUser(@Body() authRegisterDto: AuthRegisterDto) {
     const user = await this.authService.createUser(authRegisterDto);
     return this.authService.buildAuthResponse(user);
@@ -39,17 +32,13 @@ export class AuthController {
   @ApiOperation({
     summary: 'Вход пользователя',
   })
+  @Post('login')
   @ApiOkResponse({
     description: 'Ответ по успешной авторизации',
     type: AuthOkResponse,
   })
-  @Post('login')
-  @UsePipes(new ValidationPipe())
   async loginUser(@Body() authLoginDto: AuthLoginDto) {
     const user = await this.authService.getUserByEmail(authLoginDto.email);
-
-    console.log(user);
-
     await this.authService.matchPasswords(
       authLoginDto.password,
       user.hashedPassword,

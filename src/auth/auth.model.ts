@@ -4,6 +4,7 @@ export class Auth {
   /** Access токен */
   @ApiProperty({
     description: 'Access токен',
+    format: 'uuid',
   })
   accessToken: string;
 }

@@ -1,6 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { ValidationPipe } from '@nestjs/common';
+import helmet from 'helmet';
+import cors from 'cors';
 
 import { AppModule } from './app.module';
 import { ConfigServiceInterface } from './types';
@@ -9,6 +12,11 @@ import { ConfigServiceInterface } from './types';
   const app = await NestFactory.create(AppModule);
   const configService = app.get<ConfigServiceInterface>(ConfigService);
   const port = configService.get<number>('PORT', 3000);
+
+  app.use(helmet());
+  app.use(cors());
+
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
   /** Swagger */
   SwaggerModule.setup(

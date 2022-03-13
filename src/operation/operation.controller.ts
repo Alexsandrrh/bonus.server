@@ -8,7 +8,7 @@ import {
 
 import { OperationService } from './operation.service';
 import { AuthGuard } from '../auth/auth.guard';
-import { AuthUser } from '../auth/decorators/authUser.decorator';
+import { AuthUser } from '../auth/decorators';
 import { OperationsOkResponse } from './responses';
 
 @ApiTags('Операции пользователя')
