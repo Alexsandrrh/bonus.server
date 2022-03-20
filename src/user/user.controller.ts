@@ -6,11 +6,10 @@ import {
   ApiOkResponse,
 } from '@nestjs/swagger';
 
-import { UserWithAmountOkResponse } from './responses';
+import { UserWithBalanceOkResponse, UsersOkResponse } from './responses';
 import { AuthGuard } from '../auth/auth.guard';
 import { AuthUser } from '../auth/decorators';
 import { UserService } from './user.service';
-import { UsersOkResponse } from './responses/usersOk.response';
 
 @ApiTags('Пользователь')
 @Controller()
@@ -27,13 +26,12 @@ export class UserController {
   @Get('user/me')
   @UseGuards(AuthGuard)
   @ApiOkResponse({
-    type: UserWithAmountOkResponse,
-    description: 'Ответ при успешном получении пользователя',
+    type: UserWithBalanceOkResponse,
   })
   async getUser(
     @AuthUser('id') userId: string,
-  ): Promise<UserWithAmountOkResponse> {
-    const user = await this.userService.getAggregatedUser(userId);
+  ): Promise<UserWithBalanceOkResponse> {
+    const user = await this.userService.getUser(userId);
     return this.userService.buildUserOkResponse(user);
   }
 
@@ -48,8 +46,6 @@ export class UserController {
   @UseGuards(AuthGuard)
   @ApiOkResponse({
     type: UsersOkResponse,
-    description:
-      'Ответ при успешном получении пользователей без авторизированного пользователя',
   })
   async getUsers(@AuthUser('id') userId: string): Promise<UsersOkResponse> {
     const users = await this.userService.getUsersWithoutAuthUser(userId);

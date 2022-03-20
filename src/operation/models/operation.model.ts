@@ -1,79 +1,115 @@
 import { TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
-import { ModelOptions, Prop, Ref } from '@typegoose/typegoose';
+import { ModelOptions, Prop, Ref, Plugins } from '@typegoose/typegoose';
 import { ApiProperty } from '@nestjs/swagger';
-import { Types } from 'mongoose';
+import { Types, Schema } from 'mongoose';
+import * as mongooseAutoPopulate from 'mongoose-autopopulate';
 
 import { User, UserModelName } from '../../user/models';
-import { PAYMENT_TYPE } from '../consts';
+import { PAYMENT_TYPE } from '../const';
 import { UserSchema } from '../../user/schemes';
 import { Product, ProductModelName } from '../../product/models';
 import { ProductSchema } from '../../product/schemes';
-
 export const OperationModelName = 'Operation';
 export const OperationCollection = 'operations';
-
-const AccountTypeEnum = [UserModelName, ProductModelName];
-const AccountTypeOneOf = [UserSchema.name, ProductSchema.name].map((name) => ({
-  $ref: `#/components/schemas/${name}`,
-}));
-type AccountTypeRef = Ref<User | Product>;
 
 @ModelOptions({
   options: { customName: OperationModelName },
   schemaOptions: {
     collection: OperationCollection,
+    toJSON: {
+      virtuals: true,
+      versionKey: false,
+      transform: (
+        doc,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        { _id, incomingAccountType, outgoingAccountType, ...ret },
+      ) => ret,
+    },
   },
 })
+@Plugins(mongooseAutoPopulate as any)
 export class Operation extends TimeStamps {
-  /** Тип операции */
+  /**
+   * Тип операции
+   * */
   @ApiProperty({
-    description: 'Тип операции',
+    title: 'Тип операции',
     enum: PAYMENT_TYPE,
   })
-  @Prop()
+  @Prop({
+    type: String,
+    enum: PAYMENT_TYPE,
+    required: true,
+  })
   paymentType: PAYMENT_TYPE;
 
-  /** Счет которому приходит сумма */
+  /**
+   * Счет которому приходит сумма
+   * */
   @ApiProperty({
-    description: 'Счет которому приходит сумма',
-    nullable: true,
-    oneOf: AccountTypeOneOf,
+    title: 'Счет которому приходит сумма',
+    oneOf: [
+      {
+        $ref: `#/components/schemas/${UserSchema.name}`,
+      },
+      {
+        $ref: `#/components/schemas/${ProductSchema.name}`,
+      },
+    ],
   })
   @Prop({
     type: Types.ObjectId,
+    autopopulate: true,
     refPath: 'incomingAccountType',
+    required: true,
   })
-  incomingAccount: AccountTypeRef;
+  incomingAccount: Ref<User | Product>;
 
-  /** Тип счета (Счет или товар), которому поступает сумма */
-  @ApiProperty({
+  /**
+   * Тип счета (Счет или товар), которому поступает сумма
+   * */
+  @Prop({
     type: String,
-    description: 'Тип счета (Счет или товар)',
-    enum: AccountTypeEnum,
+    enum: [UserModelName, ProductModelName],
+    required: true,
   })
-  @Prop()
-  incomingAccountType: string;
+  incomingAccountType: typeof UserModelName | typeof ProductModelName;
 
-  /** Счет от которого взымается сумма */
+  /**
+   * Счет от которого взымается сумма
+   * */
   @ApiProperty({
-    description: 'Счет от которого взымается сумма',
+    title: 'Счет от которого взымается сумма',
     nullable: true,
-    oneOf: AccountTypeOneOf,
+    oneOf: [
+      {
+        $ref: `#/components/schemas/${UserSchema.name}`,
+      },
+    ],
   })
-  @Prop({ type: Types.ObjectId, refPath: 'outgoingAccountType' })
-  outgoingAccount: AccountTypeRef;
-
-  /** Тип счета (Счет или товар), от которого поступает сумма */
-  @ApiProperty({
-    description: 'Тип счета (Счет или товар), от которого поступает сумма',
-    enum: AccountTypeEnum,
+  @Prop({
+    type: Types.ObjectId,
+    autopopulate: true,
+    refPath: 'outgoingAccountType',
+    default: null,
   })
-  @Prop()
-  outgoingAccountType: string;
+  outgoingAccount: Ref<User> | null;
 
-  /** Сумма */
+  /**
+   * Тип счета (Счет или товар), от которого поступает сумма
+   * */
+  @Prop({
+    type: Schema.Types.Mixed,
+    enum: [UserModelName],
+    default: null,
+  })
+  outgoingAccountType: typeof UserModelName | null;
+
+  /**
+   * Сумма операции
+   * */
   @ApiProperty({
-    description: 'Сумма',
+    title: 'Сумма операции',
   })
   @Prop({ type: Number, default: 0 })
   paymentAmount: number;

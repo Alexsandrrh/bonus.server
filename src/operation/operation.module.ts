@@ -4,9 +4,10 @@ import { TypegooseModule } from 'nestjs-typegoose';
 import { OperationController } from './operation.controller';
 import { OperationService } from './operation.service';
 import { Operation } from './models';
+import { UserModule } from '../user/user.module';
 
 @Module({
-  imports: [TypegooseModule.forFeature([Operation])],
+  imports: [TypegooseModule.forFeature([Operation]), UserModule],
   controllers: [OperationController],
   providers: [OperationService],
   exports: [OperationService],

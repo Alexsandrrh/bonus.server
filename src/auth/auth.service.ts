@@ -14,7 +14,6 @@ import { User } from '../user/models';
 import { ConfigServiceInterface } from '../types';
 import { AuthRegisterDto } from './dto';
 import { OperationService } from '../operation/operation.service';
-import { PAYMENT_TYPE } from '../operation/consts';
 
 @Injectable()
 export class AuthService {
@@ -44,14 +43,7 @@ export class AuthService {
       hashedPassword,
     });
 
-    await this.operationService.createOperation({
-      incomingAccount: user.id,
-      incomingAccountType: 'UserModel',
-      outgoingAccount: null,
-      outgoingAccountType: null,
-      paymentAmount: 500,
-      paymentType: PAYMENT_TYPE.present,
-    });
+    await this.operationService.createPresent(user, 500);
 
     return user;
   };

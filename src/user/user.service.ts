@@ -4,10 +4,7 @@ import { InjectModel } from 'nestjs-typegoose';
 import { Types } from 'mongoose';
 
 import { User } from './models';
-import { UserWithAmountOkResponse } from './responses';
-import { UsersOkResponse } from './responses/usersOk.response';
-import { UserWithAmountSchemaType } from './schemes';
-import { OperationCollection } from '../operation/models';
+import { UserWithBalanceOkResponse, UsersOkResponse } from './responses';
 
 @Injectable()
 export class UserService {
@@ -19,83 +16,26 @@ export class UserService {
   getUser = (userId: string) =>
     this.userModel
       .findById(userId)
+      .select('+balance')
       .orFail(new NotFoundException('Пользователь не найден!'));
-
-  /**
-   * Получение пользователя с дополнительными информационными полями
-   * */
-  getAggregatedUser = async (userId: string) => {
-    const [user] = await this.userModel.aggregate<UserWithAmountSchemaType>([
-      { $match: { _id: new Types.ObjectId(userId) } },
-      {
-        $lookup: {
-          from: OperationCollection,
-          as: 'incoming',
-          pipeline: [
-            {
-              $match: {
-                incomingAccount: new Types.ObjectId(userId),
-                incomingAccountType: 'UserModel',
-              },
-            },
-          ],
-        },
-      },
-      {
-        $lookup: {
-          from: OperationCollection,
-          as: 'outgoing',
-          pipeline: [
-            {
-              $match: {
-                outgoingAccount: new Types.ObjectId(userId),
-                outgoingAccountType: 'UserModel',
-              },
-            },
-          ],
-        },
-      },
-      {
-        $addFields: {
-          id: '$_id',
-          amount: {
-            $subtract: [
-              {
-                $sum: '$incoming.paymentAmount',
-              },
-              {
-                $sum: '$outgoing.paymentAmount',
-              },
-            ],
-          },
-        },
-      },
-      {
-        $project: {
-          _id: 0,
-          __v: 0,
-          hashedPassword: 0,
-          outgoing: 0,
-          incoming: 0,
-        },
-      },
-    ]);
-
-    if (!user) throw new NotFoundException('Пользователь не найден!');
-
-    return user;
-  };
 
   /**
    * Получить всех пользователей без авторизированного пользователя
    * */
   getUsersWithoutAuthUser = (userId: string) =>
-    this.userModel.find({ _id: { $ne: userId } });
+    this.userModel.find({ _id: { $ne: new Types.ObjectId(userId) } });
 
+  /**
+   * Обновить баланс пользователя
+   * */
+  updateUserBalance = (userId: string, balance: number) =>
+    this.userModel
+      .findByIdAndUpdate(userId, { $set: { balance } }, { new: true })
+      .select('+balance');
   /**
    * Создать ответ пользователя
    * */
-  buildUserOkResponse = (user: User): UserWithAmountOkResponse => ({
+  buildUserOkResponse = (user: User): UserWithBalanceOkResponse => ({
     response: user,
   });
 

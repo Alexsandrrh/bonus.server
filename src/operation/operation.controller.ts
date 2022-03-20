@@ -1,18 +1,20 @@
-import { Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import {
   ApiBearerAuth,
+  ApiOkResponse,
   ApiOperation,
   ApiTags,
-  ApiOkResponse,
 } from '@nestjs/swagger';
 
 import { OperationService } from './operation.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { AuthUser } from '../auth/decorators';
 import { OperationsOkResponse } from './responses';
+import { CreateUserTransferDto } from './dto';
 
 @ApiTags('Операции пользователя')
 @Controller('operations')
+@UseGuards(AuthGuard)
 export class OperationController {
   constructor(private readonly operationService: OperationService) {}
 
@@ -22,7 +24,6 @@ export class OperationController {
   @ApiOperation({ summary: 'Получение всех операций пользователя' })
   @ApiBearerAuth()
   @Get()
-  @UseGuards(AuthGuard)
   @ApiOkResponse({ type: OperationsOkResponse })
   async getUserOperations(
     @AuthUser('id') userId: string,
@@ -37,19 +38,14 @@ export class OperationController {
   @ApiOperation({ summary: 'Создать перевод от пользователя к пользователю' })
   @ApiBearerAuth()
   @Post('transfer')
-  @UseGuards(AuthGuard)
-  createUserTransfer() {
-    return 'createUserTransfer';
-  }
-
-  /**
-   * Создать покупку пользователя
-   * */
-  @ApiOperation({ summary: 'Создать покупку пользователя' })
-  @ApiBearerAuth()
-  @Post('purchase')
-  @UseGuards(AuthGuard)
-  createUserPurchase() {
-    return 'createUserPurchase';
+  async createUserTransfer(
+    @AuthUser('id') userId: string,
+    @Body() createUserTransferDto: CreateUserTransferDto,
+  ) {
+    const operation = await this.operationService.createTransfer(
+      userId,
+      createUserTransferDto,
+    );
+    return this.operationService.buildOperationOkResponse(operation);
   }
 }

@@ -1,24 +1,31 @@
 import { User } from '../models';
 import { ApiProperty } from '@nestjs/swagger';
+import { Types } from 'mongoose';
 
 export class UserSchema extends User {
-  /** Идентификатор пользователя */
+  /**
+   * Идентификатор пользователя
+   * */
   @ApiProperty({
-    description: 'Идентификатор пользователя',
-    format: 'uuid',
+    title: 'Идентификатор пользователя',
+    example: new Types.ObjectId(),
   })
   id: string;
 
-  /** Дата создания пользователя */
+  /**
+   * Дата создания пользователя
+   * */
   @ApiProperty({
-    description: 'Дата создания пользователя',
+    title: 'Дата создания пользователя',
     type: Date,
   })
   createdAt: Date;
 
-  /** Дата последнего изменения информации о пользователе */
+  /**
+   * Дата последнего изменения информации о пользователе
+   * */
   @ApiProperty({
-    description: 'Дата последнего изменения информации о пользователе',
+    title: 'Дата последнего изменения информации о пользователе',
     type: Date,
   })
   updatedAt: Date;

@@ -1,23 +1,29 @@
 import { Operation } from '../models';
 import { ApiProperty } from '@nestjs/swagger';
+import { Types } from 'mongoose';
 
 export class OperationSchema extends Operation {
-  /** Идентификатор операции */
+  /**
+   * Идентификатор операции
+   * */
   @ApiProperty({
-    format: 'uuid',
-    description: 'Идентификатор операции',
+    title: 'Идентификатор операции',
+    example: new Types.ObjectId(),
   })
   id: string;
 
-  /** Дата создания операции */
+  /**
+   * Дата создания операции
+   * */
   @ApiProperty({
-    type: Date,
-    description: 'Дата создания операции',
+    title: 'Дата создания операции',
   })
   createdAt: Date;
 
-  /** Дата изменения операции */
-  @ApiProperty({ type: Date, description: 'Дата изменения операции' })
+  /**
+   * Дата изменения операции
+   * */
+  @ApiProperty({ title: 'Дата изменения операции' })
   updatedAt: Date;
 }
 

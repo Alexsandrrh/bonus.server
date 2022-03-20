@@ -1,1 +1,2 @@
-export * from './userWithAmountOk.response';
+export * from './userWithBalanceOk.response';
+export * from './usersOk.response';

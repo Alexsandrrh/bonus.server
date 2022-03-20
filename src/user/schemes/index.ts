@@ -1,2 +1,2 @@
 export * from './user.schema';
-export * from './userWithAmount.schema';
+export * from './userWithBalance.schema';
