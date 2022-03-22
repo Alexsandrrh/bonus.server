@@ -8,8 +8,10 @@ import { OperationsOkResponse, OperationSuccessOkResponse } from './responses';
 import { User, UserModelName } from '../user/models';
 import { PAYMENT_TYPE } from './const';
 import { UserService } from '../user/user.service';
-import { CreateUserTransferDto } from './dto';
+import { CreateUserPurchaseDto, CreateUserTransferDto } from './dto';
 import { OperationSuccessSchema } from './schemes';
+import { ProductService } from '../product/product.service';
+import { ProductModelName } from '../product/models';
 
 @Injectable()
 export class OperationService {
@@ -17,6 +19,7 @@ export class OperationService {
     @InjectModel(Operation)
     private readonly operationModel: ModelType<Operation>,
     @Inject(UserService) private readonly userService: UserService,
+    @Inject(ProductService) private readonly productService: ProductService,
   ) {}
 
   /**
@@ -139,6 +142,35 @@ export class OperationService {
     });
 
     await this.userService.updateUserBalance(userId, userCurrentBalance);
+
+    return {
+      userCurrentBalance,
+      performedOperation,
+    };
+  };
+
+  /**
+   * Создать покупку товара
+   * */
+  createPurchase = async (
+    userId: string,
+    { productId }: CreateUserPurchaseDto,
+  ): Promise<OperationSuccessSchema> => {
+    const product = await this.productService.getProductById(productId);
+
+    const userCurrentBalance = await this.getBalanceAfterSpend(
+      userId,
+      product.price,
+    );
+
+    const performedOperation = await this.createOperation({
+      incomingAccount: product.id,
+      incomingAccountType: ProductModelName,
+      outgoingAccount: userId,
+      outgoingAccountType: UserModelName,
+      paymentType: PAYMENT_TYPE.transfer,
+      paymentAmount: product.price,
+    });
 
     return {
       userCurrentBalance,

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from 'nestjs-typegoose';
 import { ModelType } from '@typegoose/typegoose/lib/types';
 
@@ -15,6 +15,19 @@ export class ProductService {
    * Получить список товаров для приобритения
    * */
   getProducts = () => this.productModel.find();
+
+  /**
+   * Получить продукт по полю ID
+   * */
+  getProductById = (productId: string) =>
+    this.productModel
+      .findById(productId)
+      .orFail(
+        new NotFoundException(
+          `Товар под идентификатором ${productId} не найден!`,
+        ),
+      )
+      .exec();
 
   /**
    * Построить ответ успешного запроса товаров

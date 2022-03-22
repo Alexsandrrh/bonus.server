@@ -1,1 +1,1 @@
-export * from './configService.interface'
+export * from './configService.interface';
