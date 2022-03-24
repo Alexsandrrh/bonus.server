@@ -12,6 +12,8 @@ import { ConfigServiceInterface } from './types';
   const configService = app.get<ConfigServiceInterface>(ConfigService);
   const port = configService.get<number>('PORT', 3000);
 
+  app.enableCors();
+
   app.use(helmet.hidePoweredBy());
 
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
