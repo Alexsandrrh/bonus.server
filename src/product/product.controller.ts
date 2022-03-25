@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, HttpCode } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 
 import { ProductsOkResponse } from './responses';
@@ -16,9 +16,11 @@ export class ProductController {
     summary: 'Получить все товары для покупки',
   })
   @Get('products')
+  @HttpCode(200)
   @ApiOkResponse({
     type: ProductsOkResponse,
     description: 'Успешный ответ списка товаров',
+    status: 200,
   })
   async getProducts(): Promise<ProductsOkResponse> {
     const products = await this.productService.getProducts();

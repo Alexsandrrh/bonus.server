@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, HttpCode, UseGuards } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -25,8 +25,11 @@ export class UserController {
   @ApiBearerAuth()
   @Get('user/me')
   @UseGuards(AuthGuard)
+  @HttpCode(200)
   @ApiOkResponse({
+    description: 'Ответ обуспешном получении пользователя',
     type: UserWithBalanceOkResponse,
+    status: 200,
   })
   async getUser(
     @AuthUser('id') userId: string,
@@ -44,8 +47,12 @@ export class UserController {
   @ApiBearerAuth()
   @Get('usersWithoutMe')
   @UseGuards(AuthGuard)
+  @HttpCode(200)
   @ApiOkResponse({
+    description:
+      'Ответ об успешном получении всех пользователей без авторизированного пользователя',
     type: UsersOkResponse,
+    status: 200,
   })
   async getUsers(@AuthUser('id') userId: string): Promise<UsersOkResponse> {
     const users = await this.userService.getUsersWithoutAuthUser(userId);

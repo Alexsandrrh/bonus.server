@@ -1,4 +1,4 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, HttpCode } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { AuthService } from './auth.service';
@@ -17,9 +17,11 @@ export class AuthController {
     summary: 'Регистрация пользователя',
   })
   @Post('register')
+  @HttpCode(200)
   @ApiOkResponse({
-    description: 'Ответ по успешной авторизации',
+    description: 'Ответ успешной регистрации пользователя',
     type: AuthOkResponse,
+    status: 200,
   })
   async registerUser(@Body() authRegisterDto: AuthRegisterDto) {
     const user = await this.authService.createUser(authRegisterDto);
@@ -33,9 +35,11 @@ export class AuthController {
     summary: 'Вход пользователя',
   })
   @Post('login')
+  @HttpCode(200)
   @ApiOkResponse({
-    description: 'Ответ по успешной авторизации',
+    description: 'Ответ успешного входа пользователя',
     type: AuthOkResponse,
+    status: 200,
   })
   async loginUser(@Body() authLoginDto: AuthLoginDto) {
     const user = await this.authService.getUserByEmail(authLoginDto.email);

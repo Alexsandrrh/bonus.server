@@ -1,4 +1,11 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOkResponse,
@@ -24,7 +31,12 @@ export class OperationController {
   @ApiOperation({ summary: 'Получение всех операций пользователя' })
   @ApiBearerAuth()
   @Get()
-  @ApiOkResponse({ type: OperationsOkResponse })
+  @HttpCode(200)
+  @ApiOkResponse({
+    description: 'Ответ об упешном получении всех операций пользователя',
+    type: OperationsOkResponse,
+    status: 200,
+  })
   async getUserOperations(
     @AuthUser('id') userId: string,
   ): Promise<OperationsOkResponse> {
@@ -38,10 +50,11 @@ export class OperationController {
   @ApiOperation({ summary: 'Создать перевод от пользователя к пользователю' })
   @ApiBearerAuth()
   @Post('transfer')
+  @HttpCode(200)
   @ApiOkResponse({
-    status: 200,
     description: 'Ответ успешно проведенной операции',
     type: OperationSuccessOkResponse,
+    status: 200,
   })
   async createUserTransfer(
     @AuthUser('id') userId: string,
@@ -60,10 +73,11 @@ export class OperationController {
   @ApiOperation({ summary: 'Создать пользовательскую покупку товара' })
   @ApiBearerAuth()
   @Post('purchase')
+  @HttpCode(200)
   @ApiOkResponse({
-    status: 200,
     description: 'Ответ успешно проведенной операции',
     type: OperationSuccessOkResponse,
+    status: 200,
   })
   async createUserPurchase(
     @AuthUser('id') userId: string,
