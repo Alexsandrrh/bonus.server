@@ -168,7 +168,7 @@ export class OperationService {
       incomingAccountType: ProductModelName,
       outgoingAccount: userId,
       outgoingAccountType: UserModelName,
-      paymentType: PAYMENT_TYPE.transfer,
+      paymentType: PAYMENT_TYPE.purchase,
       paymentAmount: product.price,
     });
 
