@@ -6,12 +6,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiOkResponse,
-  ApiOperation,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 
 import { OperationService } from './operation.service';
 import { AuthGuard } from '../auth/auth.guard';
@@ -19,8 +14,7 @@ import { AuthUser } from '../auth/decorators';
 import { OperationsOkResponse, OperationSuccessOkResponse } from './responses';
 import { CreateUserTransferDto, CreateUserPurchaseDto } from './dto';
 
-@ApiTags('Операции пользователя')
-@Controller('operations')
+@Controller()
 @UseGuards(AuthGuard)
 export class OperationController {
   constructor(private readonly operationService: OperationService) {}
@@ -28,9 +22,12 @@ export class OperationController {
   /**
    * Получение всех операций пользователя
    * */
-  @ApiOperation({ summary: 'Получение всех операций пользователя' })
+  @ApiOperation({
+    tags: ['Пользователь'],
+    summary: 'Получение всех операций пользователя',
+  })
   @ApiBearerAuth()
-  @Get()
+  @Get('user/operations')
   @HttpCode(200)
   @ApiOkResponse({
     description: 'Ответ об упешном получении всех операций пользователя',
@@ -47,9 +44,12 @@ export class OperationController {
   /**
    * Создать перевод от пользователя к пользователю
    * */
-  @ApiOperation({ summary: 'Создать перевод от пользователя к пользователю' })
+  @ApiOperation({
+    tags: ['Операции пользователя'],
+    summary: 'Создать перевод от пользователя к пользователю',
+  })
   @ApiBearerAuth()
-  @Post('transfer')
+  @Post('operations/transfer')
   @HttpCode(200)
   @ApiOkResponse({
     description: 'Ответ успешно проведенной операции',
@@ -70,9 +70,12 @@ export class OperationController {
   /**
    * Создать пользовательскую покупку товара
    * */
-  @ApiOperation({ summary: 'Создать пользовательскую покупку товара' })
+  @ApiOperation({
+    tags: ['Операции пользователя'],
+    summary: 'Создать пользовательскую покупку товара',
+  })
   @ApiBearerAuth()
-  @Post('purchase')
+  @Post('operations/purchase')
   @HttpCode(200)
   @ApiOkResponse({
     description: 'Ответ успешно проведенной операции',

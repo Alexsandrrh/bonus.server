@@ -45,7 +45,7 @@ export class UserController {
     summary: 'Получение всех пользователей без авторизированного пользователя',
   })
   @ApiBearerAuth()
-  @Get('usersWithoutMe')
+  @Get('user/usersWithoutMe')
   @UseGuards(AuthGuard)
   @HttpCode(200)
   @ApiOkResponse({
