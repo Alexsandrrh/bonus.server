@@ -6,10 +6,10 @@ export class CreateUserTransferDto {
   /**
    * Сумма перевода
    * */
-  @ApiProperty({ title: 'Сумма перевода', example: 100 })
+  @ApiProperty({ title: 'Сумма перевода', example: 10, minimum: 10 })
   @IsNotEmpty()
   @IsNumber()
-  @Min(0)
+  @Min(10)
   paymentAmount: number;
 
   /**
