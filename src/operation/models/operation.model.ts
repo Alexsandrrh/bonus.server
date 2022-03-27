@@ -1,5 +1,11 @@
 import { TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
-import { ModelOptions, Prop, Ref, Plugins } from '@typegoose/typegoose';
+import {
+  ModelOptions,
+  Prop,
+  Ref,
+  Plugins,
+  Severity,
+} from '@typegoose/typegoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { Types, Schema } from 'mongoose';
 import * as mongooseAutoPopulate from 'mongoose-autopopulate';
@@ -13,7 +19,7 @@ export const OperationModelName = 'Operation';
 export const OperationCollection = 'operations';
 
 @ModelOptions({
-  options: { customName: OperationModelName },
+  options: { customName: OperationModelName, allowMixed: Severity.ALLOW },
   schemaOptions: {
     collection: OperationCollection,
     toJSON: {
@@ -100,7 +106,6 @@ export class Operation extends TimeStamps {
    * */
   @Prop({
     type: Schema.Types.Mixed,
-    enum: [UserModelName],
     default: null,
   })
   outgoingAccountType: typeof UserModelName | null;

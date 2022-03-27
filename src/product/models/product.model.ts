@@ -16,7 +16,9 @@ export interface Product extends Base {}
   },
 })
 export class Product extends TimeStamps {
-  /** Название товара */
+  /**
+   * Название товара
+   * */
   @ApiProperty({
     description: 'Название товара',
   })
@@ -26,7 +28,9 @@ export class Product extends TimeStamps {
   })
   title: string;
 
-  /** Описание товара */
+  /**
+   *  Описание товара
+   *  */
   @ApiProperty({
     description: 'Описание товара',
   })
@@ -36,7 +40,9 @@ export class Product extends TimeStamps {
   })
   description: string;
 
-  /** Цена товара */
+  /**
+   * Цена товара
+   * */
   @ApiProperty({
     description: 'Цена товара',
   })

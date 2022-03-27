@@ -79,7 +79,7 @@ export class OperationService {
    * */
   getBalanceAfterSpend = async (userId: string, paymentAmount: number) => {
     const balance = await this.getUserBalance(userId);
-    const subtract = balance - paymentAmount;
+    const subtract = balance - Math.abs(paymentAmount);
     if (!subtract)
       throw new NotAcceptableException(
         'Не достаточно средства на балансе пользователя!',
