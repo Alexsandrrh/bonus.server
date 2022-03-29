@@ -142,6 +142,10 @@ export class OperationService {
     });
 
     await this.userService.updateUserBalance(userId, userCurrentBalance);
+    await this.userService.updateUserBalance(
+      incomingAccount,
+      await this.getUserBalance(incomingAccount),
+    );
 
     return {
       userCurrentBalance,
